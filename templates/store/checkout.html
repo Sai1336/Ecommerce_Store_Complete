@@ -1,0 +1,17 @@
+{% extends 'store/base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="content-panel narrow-panel">
+    <h1>Order Summary</h1>
+    <p class="muted">This student project records orders without processing online payments.</p>
+    {% for item in items %}
+    <div class="summary-row"><span>{{ item.product.name }} × {{ item.quantity }}</span><strong>₹{{ item.total_price }}</strong></div>
+    {% endfor %}
+    <div class="cart-total"><span>Total amount</span><strong>₹{{ total }}</strong></div>
+    <form method="post">
+        {% csrf_token %}
+        <button class="button full" type="submit">Place Order</button>
+    </form>
+    <p><a href="{% url 'cart' %}">Back to cart</a></p>
+</div>
+{% endblock %}

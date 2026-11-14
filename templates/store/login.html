@@ -1,0 +1,45 @@
+{% extends 'store/base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>Welcome back</h1>
+    <p class="muted">Log in to your customer account.</p>
+    <form method="post">
+    {% csrf_token %}
+
+    <label for="username">Username</label>
+    <input
+        type="text"
+        id="username"
+        name="username"
+        required
+    >
+
+    <label for="password">Password</label>
+    <input
+        type="password"
+        id="password"
+        name="password"
+        required
+    >
+
+    <div class="captcha-box">
+        <label for="captcha_answer">
+            Security Check: What is
+            {{ captcha_a }} + {{ captcha_b }}?
+        </label>
+
+        <input
+            type="number"
+            id="captcha_answer"
+            name="captcha_answer"
+            placeholder="Enter the answer"
+            required
+        >
+    </div>
+
+    <button type="submit">Login</button>
+</form>
+    <p class="form-bottom">New here? <a href="{% url 'register' %}">Create an account</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">My Wishlist ♥</h2>
+
+    {% if items %}
+        <div class="row g-4">
+            {% for item in items %}
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+
+                        {% if item.product.image %}
+                            <img
+                                src="{{ item.product.image.url }}"
+                                class="card-img-top"
+                                alt="{{ item.product.name }}"
+                                style="height: 220px; object-fit: contain;"
+                            >
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">
+                                {{ item.product.name }}
+                            </h5>
+
+                            <p class="text-muted">
+                                {{ item.product.get_category_display }}
+                            </p>
+
+                            <h5>₹{{ item.product.price }}</h5>
+
+                            <div class="mt-auto pt-3">
+                                <a
+                                    href="{% url 'product_detail' item.product.id %}"
+                                    class="btn btn-primary w-100 mb-2"
+                                >
+                                    View Product
+                                </a>
+
+                                {% if item.product.available %}
+                                    <form
+                                        method="post"
+                                        action="{% url 'add_to_cart' item.product.id %}"
+                                        class="mb-2"
+                                    >
+                                        {% csrf_token %}
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success w-100"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <p class="text-danger">
+                                        Currently unavailable
+                                    </p>
+                                {% endif %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'toggle_wishlist' item.product.id %}"
+                                >
+                                    {% csrf_token %}
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-danger w-100"
+                                    >
+                                        Remove from Wishlist
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <h4>Your wishlist is empty.</h4>
+            <p>Save products here to find them easily later.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">
+                Browse Products
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

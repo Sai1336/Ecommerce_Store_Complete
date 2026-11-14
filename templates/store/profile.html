@@ -1,0 +1,12 @@
+{% extends 'store/base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="content-panel narrow-panel">
+    <h1>My Profile</h1>
+    <div class="profile-avatar">👤</div>
+    <div class="summary-row"><span>Username</span><strong>{{ user.username }}</strong></div>
+    <div class="summary-row"><span>Email</span><strong>{{ user.email|default:"Not provided" }}</strong></div>
+    <p class="muted">To change account details, contact the project administrator.</p>
+    <a class="button" href="{% url 'orders' %}">View My Orders</a>
+</div>
+{% endblock %}

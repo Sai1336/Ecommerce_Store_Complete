@@ -1,0 +1,13 @@
+{% extends 'store/base.html' %}
+{% block title %}Order Placed{% endblock %}
+{% block content %}
+<div class="content-panel success-panel">
+    <div class="success-icon">✓</div>
+    <h1>Order placed successfully!</h1>
+    <p>Your order number is <strong>#{{ order.id }}</strong>.</p>
+    <p>Total: <strong>₹{{ order.total_amount }}</strong></p>
+    <p>Status: <span class="status-tag">{{ order.status }}</span></p>
+    <a class="button" href="{% url 'orders' %}">View My Orders</a>
+    <a class="text-link" href="{% url 'home' %}">Continue Shopping</a>
+</div>
+{% endblock %}

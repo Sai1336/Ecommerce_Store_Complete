@@ -1,0 +1,73 @@
+{% extends 'store/base.html' %}
+{% block title %}Shop | E-Commerce Store{% endblock %}
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">YOUR ONLINE SHOPPING DESTINATION</p>
+    <h1>Find something you love.</h1>
+    <p>Browse products, compare prices, and shop with ease.</p>
+</section>
+
+<div class="shop-layout" id="products">
+    <aside class="filter-panel">
+        <h2>Filters</h2>
+        <form method="get" action="{% url 'home' %}">
+            <label for="q">Search products</label>
+            <input id="q" type="search" name="q" value="{{ search_query }}" placeholder="Search by name">
+
+            <label for="category">Category</label>
+            <select id="category" name="category">
+                <option value="">All categories</option>
+                {% for value, label in categories %}
+                <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="min_price">Minimum price (₹)</label>
+            <input id="min_price" type="number" name="min_price" min="0" step="0.01" value="{{ min_price }}" placeholder="e.g. 100">
+
+            <label for="max_price">Maximum price (₹)</label>
+            <input id="max_price" type="number" name="max_price" min="0" step="0.01" value="{{ max_price }}" placeholder="e.g. 2000">
+
+            <button class="button full" type="submit">Apply Filters</button>
+            <a class="clear-filter" href="{% url 'home' %}">Clear Filters</a>
+        </form>
+    </aside>
+
+    <section class="results">
+        <div class="results-heading">
+            <div><h2>Our Products</h2><p>Choose the right product for you.</p></div>
+            <span class="result-count">{{ products|length }} result{{ products|length|pluralize }}</span>
+        </div>
+        <div class="product-grid">
+            {% for product in products %}
+            <article class="product-card">
+                <a class="product-image" href="{% url 'product_detail' product.id %}">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="image-placeholder">No image available</div>
+                    {% endif %}
+                </a>
+                <div class="product-info">
+                    <span class="category-tag">{{ product.get_category_display }}</span>
+                    <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
+                    <p class="description">{{ product.description|truncatewords:16 }}</p>
+                    <div class="product-bottom">
+                        <strong class="price">₹{{ product.price }}</strong>
+                        {% if product.available %}<span class="stock in-stock">Available</span>
+                        {% else %}<span class="stock out-stock">Not in Stock</span>{% endif %}
+                    </div>
+                    {% if product.available %}
+                    <a class="button full" href="{% url 'product_detail' product.id %}">View Details</a>
+                    {% else %}
+                    <button class="button full disabled" disabled>Not Available</button>
+                    {% endif %}
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state"><h3>No products found</h3><p>Try changing the category or price range.</p><a class="button" href="{% url 'home' %}">Show all products</a></div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

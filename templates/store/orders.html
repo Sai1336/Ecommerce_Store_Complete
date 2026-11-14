@@ -1,0 +1,19 @@
+{% extends 'store/base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="content-panel">
+    <h1>My Orders</h1>
+    {% for order in orders %}
+    <article class="order-card">
+        <div class="order-heading"><h3>Order #{{ order.id }}</h3><span class="status-tag">{{ order.status }}</span></div>
+        <p class="muted">{{ order.order_date|date:"d M Y, h:i A" }}</p>
+        {% for item in order.items.all %}
+        <div class="summary-row"><span>{{ item.product.name }} × {{ item.quantity }}</span><span>₹{{ item.total_price }}</span></div>
+        {% endfor %}
+        <div class="cart-total"><span>Order total</span><strong>₹{{ order.total_amount }}</strong></div>
+    </article>
+    {% empty %}
+    <div class="empty-state"><h3>No orders yet</h3><p>Your placed orders will appear here.</p><a class="button" href="{% url 'home' %}">Browse Products</a></div>
+    {% endfor %}
+</div>
+{% endblock %}

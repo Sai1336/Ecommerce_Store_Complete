@@ -1,0 +1,364 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}E-Commerce Store{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        /* Navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* Profile dropdown */
+        .profile {
+            position: relative;
+        }
+
+        .profile-button {
+            cursor: pointer;
+            font: inherit;
+            color: inherit;
+            background: transparent;
+            border: none;
+            padding: 8px;
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            min-width: 170px;
+            z-index: 1000;
+            background: white;
+            color: #222;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .profile:hover .profile-menu,
+        .profile:focus-within .profile-menu {
+            display: block;
+        }
+
+        .profile-menu a,
+        .profile-menu .menu-logout {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 14px;
+            text-align: left;
+            text-decoration: none;
+            color: inherit;
+            background: transparent;
+            border: none;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .profile-menu a:hover,
+        .profile-menu .menu-logout:hover {
+            background: #f2f2f2;
+        }
+
+        .profile-menu form {
+            margin: 0;
+        }
+
+        /* Main content */
+        .page {
+            min-height: 65vh;
+        }
+
+        /* Django messages */
+        .messages {
+            margin: 16px auto;
+        }
+
+        .message {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .message.success {
+            background: #e7f6eb;
+            color: #185c2b;
+        }
+
+        .message.error {
+            background: #fdeaea;
+            color: #8a1f1f;
+        }
+
+        .message.warning {
+            background: #fff4d6;
+            color: #735400;
+        }
+
+        .message.info {
+            background: #e8f2ff;
+            color: #164d80;
+        }
+
+        /* Professional footer */
+        .site-footer {
+            margin-top: 50px;
+            padding: 40px 24px 18px;
+            background: #172033;
+            color: #e5e7eb;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 32px;
+        }
+
+        .footer-brand {
+            min-width: 0;
+        }
+
+        .footer-logo {
+            display: inline-block;
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .footer-brand p,
+        .footer-column p {
+            color: #cbd5e1;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .footer-column h3 {
+            margin: 0 0 15px;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .footer-column a {
+            display: block;
+            width: fit-content;
+            margin-bottom: 11px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-column a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding-top: 18px;
+            border-top: 1px solid #374151;
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .footer-bottom p {
+            margin: 6px 0;
+        }
+
+        /* Tablet layout */
+        @media (max-width: 800px) {
+            .footer-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 24px;
+            }
+        }
+
+        /* Mobile layout */
+        @media (max-width: 650px) {
+            .navbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .profile-menu {
+                right: auto;
+                left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+
+            .site-footer {
+                padding: 30px 20px 18px;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <a class="logo" href="{% url 'home' %}">
+            🛒 E-Commerce Store
+        </a>
+
+        <div class="nav-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'home' %}#products">Products</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'cart' %}">Cart</a>
+                <a href="{% url 'wishlist' %}">♥ My Wishlist</a>
+
+                <div class="profile">
+                    <button
+                        class="profile-button"
+                        type="button"
+                        aria-haspopup="true"
+                    >
+                        👤 {{ user.username }} ▾
+                    </button>
+
+                    <div class="profile-menu">
+                        <a href="{% url 'profile' %}">My Profile</a>
+                        <a href="{% url 'orders' %}">My Orders</a>
+
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="menu-logout">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'cart' %}">Cart</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}" class="nav-register">
+                    Register
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main page content and notification messages -->
+    <main class="page">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Professional footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+
+            <!-- Store information -->
+            <div class="footer-brand">
+                <a href="{% url 'home' %}" class="footer-logo">
+                    🛒 E-Commerce Store
+                </a>
+
+                <p>
+                    Your convenient destination for everyday shopping.
+                    Discover products, save your favorites, and share
+                    your experience through customer reviews.
+                </p>
+            </div>
+
+            <!-- Quick navigation -->
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'home' %}#products">Shop Products</a>
+                <a href="{% url 'cart' %}">Shopping Cart</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'wishlist' %}">My Wishlist</a>
+                    <a href="{% url 'orders' %}">My Orders</a>
+                {% endif %}
+            </div>
+
+            <!-- Account links -->
+            <div class="footer-column">
+                <h3>My Account</h3>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}">My Profile</a>
+                    <a href="{% url 'orders' %}">Order History</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'register' %}">Create Account</a>
+                {% endif %}
+            </div>
+
+            <!-- Customer support -->
+            <div class="footer-column">
+                <h3>Customer Support</h3>
+
+                <p>Need help with your shopping?</p>
+                <p>
+                    Please contact the store administrator
+                    for assistance.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <p>
+                &copy; {% now "Y" %} E-Commerce Store.
+                All rights reserved.
+            </p>
+
+            <p>Designed as a student e-commerce project.</p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>
